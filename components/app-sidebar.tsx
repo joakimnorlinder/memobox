@@ -11,6 +11,7 @@ import {
   Plus,
   LogOut,
   ChevronRight,
+  Trash2,
 } from "lucide-react"
 
 import {
@@ -37,6 +38,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { CreateFolderDialog } from "@/components/create-folder-dialog"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface FolderWithChildren {
   id: string
@@ -71,11 +73,13 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/30 font-bold">
             M
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">MemoBox</span>
+            <span className="text-sm font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              MemoBox
+            </span>
             <span className="text-xs text-muted-foreground">Your notes</span>
           </div>
         </div>
@@ -98,6 +102,14 @@ export function AppSidebar() {
                   <a href="/notes/search">
                     <Search className="h-4 w-4" />
                     <span>Search</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href="/notes/trash">
+                    <Trash2 className="h-4 w-4" />
+                    <span>Trash</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -125,33 +137,36 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="w-full">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={session?.user?.image || undefined} />
-                    <AvatarFallback>
-                      {session?.user?.name?.[0] || session?.user?.email?.[0] || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-start text-left">
-                    <span className="text-sm font-medium truncate max-w-[150px]">
-                      {session?.user?.name || session?.user?.email}
-                    </span>
-                  </div>
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => router.push('/settings')}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2 px-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton className="flex-1">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={session?.user?.image || undefined} />
+                      <AvatarFallback>
+                        {session?.user?.name?.[0] || session?.user?.email?.[0] || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start text-left">
+                      <span className="text-sm font-medium truncate max-w-[120px]">
+                        {session?.user?.name || session?.user?.email}
+                      </span>
+                    </div>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem onClick={() => router.push('/settings')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <ThemeToggle />
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

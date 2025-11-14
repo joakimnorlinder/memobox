@@ -14,10 +14,11 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const note = await prisma.note.findUnique({
+    const note = await prisma.note.findFirst({
       where: {
         id,
         userId: session.user.id,
+        deletedAt: null, // Exclude deleted notes
       },
       include: {
         folder: {
@@ -59,10 +60,22 @@ export async function PATCH(
     const body = await request.json()
     const { title, content, folderId, isPinned } = body
 
-    const note = await prisma.note.update({
+    // First check if note exists and is not deleted
+    const existingNote = await prisma.note.findFirst({
       where: {
         id,
         userId: session.user.id,
+        deletedAt: null,
+      }
+    })
+
+    if (!existingNote) {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 })
+    }
+
+    const note = await prisma.note.update({
+      where: {
+        id,
       },
       data: {
         ...(title !== undefined && { title }),
@@ -103,10 +116,14 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await prisma.note.delete({
+    // Soft delete by setting deletedAt timestamp
+    await prisma.note.update({
       where: {
         id,
         userId: session.user.id,
+      },
+      data: {
+        deletedAt: new Date(),
       }
     })
 

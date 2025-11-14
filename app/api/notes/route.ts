@@ -16,6 +16,7 @@ export async function GET(request: Request) {
 
     let where: any = {
       userId: session.user.id,
+      deletedAt: null, // Exclude deleted notes
     }
 
     if (folderId) {

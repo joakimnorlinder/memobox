@@ -122,24 +122,30 @@ export default function HomePage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">All Notes</h1>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              All Notes
+            </h1>
             <p className="text-muted-foreground">
               {notes.length} {notes.length === 1 ? 'note' : 'notes'}
             </p>
           </div>
-          <Button onClick={createNote} size="lg" className="gap-2">
+          <Button
+            onClick={createNote}
+            size="lg"
+            className="gap-2 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:scale-105"
+          >
             <Plus className="h-4 w-4" />
             New Note
           </Button>
         </div>
 
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
           <Input
             placeholder="Search notes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 border-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-colors"
           />
         </div>
       </div>
@@ -159,8 +165,8 @@ export default function HomePage() {
         <div className="space-y-8">
           {pinnedNotes.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
-                <Pin className="h-4 w-4" />
+              <h2 className="text-sm font-semibold text-primary mb-4 flex items-center gap-2">
+                <Pin className="h-4 w-4 fill-primary" />
                 Pinned
               </h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -228,18 +234,27 @@ function NoteCard({
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow"
+      className={`cursor-pointer hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 hover:scale-[1.02] border-2 ${
+        note.isPinned
+          ? 'border-primary/30 bg-gradient-to-br from-primary/5 via-accent/5 to-transparent'
+          : 'border-border hover:border-primary/50 bg-gradient-to-br from-card via-card to-muted/20'
+      }`}
       onClick={() => router.push(`/notes/note/${note.id}`)}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg truncate">{note.title}</CardTitle>
+            <CardTitle className={`text-lg truncate ${note.isPinned ? 'text-primary' : ''}`}>
+              {note.title}
+            </CardTitle>
             {note.folder && (
               <CardDescription className="flex items-center gap-1 mt-1">
                 <span
-                  className="inline-block w-2 h-2 rounded-full"
-                  style={{ backgroundColor: note.folder.color || '#6366f1' }}
+                  className="inline-block w-2 h-2 rounded-full shadow-lg"
+                  style={{
+                    backgroundColor: note.folder.color || '#6366f1',
+                    boxShadow: `0 0 8px ${note.folder.color || '#6366f1'}40`
+                  }}
                 />
                 {note.folder.name}
               </CardDescription>
@@ -247,7 +262,7 @@ function NoteCard({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -264,7 +279,7 @@ function NoteCard({
                   e.stopPropagation()
                   onDelete(note.id)
                 }}
-                className="text-destructive"
+                className="text-destructive hover:bg-destructive/10"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
