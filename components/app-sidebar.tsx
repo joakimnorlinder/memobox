@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import {
   Folder,
   Home,
@@ -73,9 +74,13 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/30 font-bold">
-            M
-          </div>
+          <Image
+            src="/memobox_logo.png"
+            alt="MemoBox Logo"
+            width={32}
+            height={32}
+            className="rounded-lg shadow-lg shadow-primary/30"
+          />
           <div className="flex flex-col">
             <span className="text-sm font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               MemoBox

@@ -1,6 +1,7 @@
 "use client"
 
 import { signIn } from "next-auth/react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -10,9 +11,13 @@ export default function SignInPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground text-3xl font-bold">
-              M
-            </div>
+            <Image
+              src="/memobox_logo.png"
+              alt="MemoBox Logo"
+              width={80}
+              height={80}
+              className="rounded-2xl shadow-lg"
+            />
           </div>
           <CardTitle className="text-3xl font-bold">Welcome to MemoBox</CardTitle>
           <CardDescription className="text-base">
