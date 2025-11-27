@@ -12,7 +12,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDebounce } from '@/hooks/use-debounce'
+import { toast } from 'sonner'
 
 interface Note {
   id: string
@@ -41,6 +43,7 @@ export default function NotePage({ params }: { params: Promise<{ id: string }> }
   const [title, setTitle] = useState('')
   const [content, setContent] = useState<any>(null)
   const [saving, setSaving] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
 
   const debouncedTitle = useDebounce(title, 500)
   const debouncedContent = useDebounce(content, 500)
@@ -157,18 +160,20 @@ export default function NotePage({ params }: { params: Promise<{ id: string }> }
   }
 
   const deleteNote = async () => {
-    if (!confirm('Are you sure you want to delete this note?')) return
-
     try {
       const response = await fetch(`/api/notes/${resolvedParams.id}`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
+        toast.success('Note deleted successfully')
         router.push('/')
+      } else {
+        toast.error('Failed to delete note')
       }
     } catch (error) {
       console.error('Error deleting note:', error)
+      toast.error('Failed to delete note. Please try again.')
     }
   }
 
@@ -186,6 +191,17 @@ export default function NotePage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <div className="h-full flex flex-col">
+      <ConfirmDialog
+        open={deleteConfirm}
+        onOpenChange={setDeleteConfirm}
+        onConfirm={deleteNote}
+        title="Delete Note"
+        description="Are you sure you want to delete this note? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
       <div className="flex items-center justify-between mb-6 pb-4 border-b">
         <div className="flex items-center gap-3">
           <Button
@@ -243,7 +259,7 @@ export default function NotePage({ params }: { params: Promise<{ id: string }> }
           <Button
             variant="destructive"
             size="sm"
-            onClick={deleteNote}
+            onClick={() => setDeleteConfirm(true)}
             className="gap-2"
           >
             <Trash2 className="h-4 w-4" />

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 interface CreateFolderDialogProps {
   onFolderCreated?: () => void
@@ -39,12 +40,16 @@ export function CreateFolderDialog({ onFolderCreated }: CreateFolderDialogProps)
       })
 
       if (response.ok) {
+        toast.success('Folder created successfully')
         setFolderName("")
         setOpen(false)
         onFolderCreated?.()
+      } else {
+        toast.error('Failed to create folder')
       }
     } catch (error) {
       console.error('Error creating folder:', error)
+      toast.error('Failed to create folder. Please try again.')
     } finally {
       setCreating(false)
     }
@@ -57,8 +62,9 @@ export function CreateFolderDialog({ onFolderCreated }: CreateFolderDialogProps)
           variant="ghost"
           size="icon"
           className="h-5 w-5"
+          aria-label="Create new folder"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-4 w-4" aria-hidden="true" />
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -68,9 +74,13 @@ export function CreateFolderDialog({ onFolderCreated }: CreateFolderDialogProps)
             Create a new folder to organize your notes
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
+        <div className="py-4 space-y-2">
+          <label htmlFor="folder-name" className="text-sm font-medium">
+            Folder name
+          </label>
           <Input
-            placeholder="Folder name"
+            id="folder-name"
+            placeholder="e.g., Personal Notes"
             value={folderName}
             onChange={(e) => setFolderName(e.target.value)}
             onKeyDown={(e) => {
@@ -78,8 +88,14 @@ export function CreateFolderDialog({ onFolderCreated }: CreateFolderDialogProps)
                 handleCreate()
               }
             }}
+            aria-invalid={folderName.trim().length === 0 && folderName.length > 0}
             autoFocus
           />
+          {folderName.trim().length === 0 && folderName.length > 0 && (
+            <p className="text-sm text-destructive">
+              Folder name cannot be empty
+            </p>
+          )}
         </div>
         <DialogFooter>
           <Button

@@ -3,11 +3,11 @@
 import { signIn } from "next-auth/react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 
 export default function SignInPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-muted to-accent/5 dark:from-background dark:via-muted/50 dark:to-accent/10 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
@@ -19,7 +19,7 @@ export default function SignInPage() {
               className="rounded-2xl shadow-lg"
             />
           </div>
-          <CardTitle className="text-3xl font-bold">Welcome to MemoBox</CardTitle>
+          <h1 className="text-3xl font-bold">Welcome to MemoBox</h1>
           <CardDescription className="text-base">
             Your beautiful notes app with images, todos, and smart organization
           </CardDescription>
@@ -57,6 +57,6 @@ export default function SignInPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   )
 }

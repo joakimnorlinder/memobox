@@ -11,6 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { toast } from 'sonner'
 
 interface Note {
   id: string
@@ -28,6 +30,10 @@ export default function TrashPage() {
   const router = useRouter()
   const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; noteId: string | null }>({
+    open: false,
+    noteId: null
+  })
 
   useEffect(() => {
     fetchTrash()
@@ -39,9 +45,12 @@ export default function TrashPage() {
       if (response.ok) {
         const data = await response.json()
         setNotes(data)
+      } else {
+        toast.error('Failed to load trash')
       }
     } catch (error) {
       console.error('Error fetching trash:', error)
+      toast.error('Failed to load trash. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -54,26 +63,34 @@ export default function TrashPage() {
       })
 
       if (response.ok) {
+        toast.success('Note restored successfully')
         fetchTrash()
+      } else {
+        toast.error('Failed to restore note')
       }
     } catch (error) {
       console.error('Error restoring note:', error)
+      toast.error('Failed to restore note. Please try again.')
     }
   }
 
-  const permanentlyDeleteNote = async (noteId: string) => {
-    if (!confirm('Are you sure you want to permanently delete this note? This action cannot be undone.')) return
+  const confirmPermanentDelete = async () => {
+    if (!deleteConfirm.noteId) return
 
     try {
-      const response = await fetch(`/api/notes/${noteId}/permanent`, {
+      const response = await fetch(`/api/notes/${deleteConfirm.noteId}/permanent`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
+        toast.success('Note permanently deleted')
         fetchTrash()
+      } else {
+        toast.error('Failed to delete note')
       }
     } catch (error) {
       console.error('Error permanently deleting note:', error)
+      toast.error('Failed to delete note. Please try again.')
     }
   }
 
@@ -87,12 +104,23 @@ export default function TrashPage() {
 
   return (
     <div className="h-full">
+      <ConfirmDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => setDeleteConfirm({ open, noteId: null })}
+        onConfirm={confirmPermanentDelete}
+        title="Permanently Delete Note"
+        description="Are you sure you want to permanently delete this note? This action cannot be undone and the note cannot be recovered."
+        confirmText="Delete Permanently"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 bg-gradient-to-r from-destructive via-accent to-primary bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
               <TrashIcon className="h-8 w-8 text-destructive" />
-              Trash
+              <span className="text-foreground">Trash</span>
             </h1>
             <p className="text-muted-foreground mt-2">
               {notes.length} {notes.length === 1 ? 'note' : 'notes'} in trash
@@ -130,7 +158,7 @@ export default function TrashPage() {
               key={note.id}
               note={note}
               onRestore={restoreNote}
-              onPermanentDelete={permanentlyDeleteNote}
+              onPermanentDelete={(noteId) => setDeleteConfirm({ open: true, noteId })}
             />
           ))}
         </div>

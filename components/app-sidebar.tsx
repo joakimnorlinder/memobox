@@ -104,14 +104,6 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="/notes/search">
-                    <Search className="h-4 w-4" />
-                    <span>Search</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
                   <a href="/notes/trash">
                     <Trash2 className="h-4 w-4" />
                     <span>Trash</span>

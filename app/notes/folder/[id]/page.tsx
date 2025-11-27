@@ -12,6 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { toast } from 'sonner'
 
 interface Note {
   id: string
@@ -39,6 +41,10 @@ export default function FolderPage({ params }: { params: Promise<{ id: string }>
   const [folder, setFolder] = useState<Folder | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; noteId: string | null }>({
+    open: false,
+    noteId: null
+  })
 
   useEffect(() => {
     fetchFolder()
@@ -101,26 +107,34 @@ export default function FolderPage({ params }: { params: Promise<{ id: string }>
       })
 
       if (response.ok) {
+        toast.success(isPinned ? 'Note unpinned' : 'Note pinned')
         fetchNotes()
+      } else {
+        toast.error('Failed to update note')
       }
     } catch (error) {
       console.error('Error updating note:', error)
+      toast.error('Failed to update note. Please try again.')
     }
   }
 
-  const deleteNote = async (noteId: string) => {
-    if (!confirm('Are you sure you want to delete this note?')) return
+  const confirmDelete = async () => {
+    if (!deleteConfirm.noteId) return
 
     try {
-      const response = await fetch(`/api/notes/${noteId}`, {
+      const response = await fetch(`/api/notes/${deleteConfirm.noteId}`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
+        toast.success('Note deleted successfully')
         fetchNotes()
+      } else {
+        toast.error('Failed to delete note')
       }
     } catch (error) {
       console.error('Error deleting note:', error)
+      toast.error('Failed to delete note. Please try again.')
     }
   }
 
@@ -141,6 +155,17 @@ export default function FolderPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <div className="h-full">
+      <ConfirmDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => setDeleteConfirm({ open, noteId: null })}
+        onConfirm={confirmDelete}
+        title="Delete Note"
+        description="Are you sure you want to delete this note? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-6">
           <Button
@@ -209,7 +234,7 @@ export default function FolderPage({ params }: { params: Promise<{ id: string }>
                     key={note.id}
                     note={note}
                     onTogglePin={togglePin}
-                    onDelete={deleteNote}
+                    onDelete={(noteId) => setDeleteConfirm({ open: true, noteId })}
                   />
                 ))}
               </div>
@@ -229,7 +254,7 @@ export default function FolderPage({ params }: { params: Promise<{ id: string }>
                     key={note.id}
                     note={note}
                     onTogglePin={togglePin}
-                    onDelete={deleteNote}
+                    onDelete={(noteId) => setDeleteConfirm({ open: true, noteId })}
                   />
                 ))}
               </div>
