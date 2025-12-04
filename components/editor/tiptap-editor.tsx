@@ -8,6 +8,8 @@ import TaskItem from '@tiptap/extension-task-item'
 import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect } from 'react'
 import { EditorToolbar } from './editor-toolbar'
+import { CompletedTasksSection } from './extensions/completed-tasks-section'
+import { AutoArchiveTasks } from './extensions/auto-archive-tasks'
 
 interface TiptapEditorProps {
   content: any
@@ -35,6 +37,8 @@ export function TiptapEditor({ content, onChange, editable = true, placeholder =
           class: 'task-list-item',
         },
       }),
+      CompletedTasksSection,
+      AutoArchiveTasks,
       Placeholder.configure({
         placeholder,
       }),

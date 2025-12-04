@@ -284,6 +284,48 @@
   opacity: 0.7 !important;
 }
 
+/* Completed Tasks Section Styles */
+.completed-tasks-section {
+  @apply mt-8 mb-4 border border-border rounded-lg overflow-hidden bg-muted/30;
+}
+
+.completed-tasks-header {
+  @apply flex items-center gap-2 px-4 py-3 bg-muted/50 border-b border-border cursor-pointer hover:bg-muted/70 transition-colors duration-200 select-none;
+}
+
+.completed-tasks-toggle {
+  @apply text-muted-foreground text-sm font-mono transition-transform duration-200;
+}
+
+.completed-tasks-title {
+  @apply text-sm font-semibold text-muted-foreground uppercase tracking-wide;
+}
+
+.completed-tasks-count {
+  @apply text-xs text-muted-foreground/70 font-normal;
+}
+
+.completed-tasks-content {
+  @apply px-4 py-2;
+  animation: slideDown 200ms ease-out;
+}
+
+.completed-tasks-list {
+  @apply mt-0;
+}
+
+/* Slide down animation for expand/collapse */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
 /* Selection */
 .ProseMirror-selectednode {
   @apply outline outline-2 outline-primary outline-offset-2;
